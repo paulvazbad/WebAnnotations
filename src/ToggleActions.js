@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {  Paper, Button, Grid    } from '@material-ui/core';
+import {  Paper, Button, Grid, Snackbar    } from '@material-ui/core';
 import  DeleteIcon  from '@material-ui/icons/Delete';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import { withStyles } from '@material-ui/core/styles';
+
 const styles={
   buttonBar:{
     marginTop:10,
     padding:10
+  },
+  root:{
+    background:'#B71C1C'
   }
 };
 class ToggleActions extends React.Component{
@@ -14,11 +19,16 @@ class ToggleActions extends React.Component{
      super(props);
      this.SaveXML = this.SaveXML.bind(this);
    }
-   SaveXML(){
+   state ={snack:null};
+   handleClose = () => {
+       this.setState({ snack: false });
+     };
 
+   SaveXML(){
      const {initialX, initialY,finalX,finalY, rectangleDone, originalH, originalW} = this.props.infImg;
      console.log(this.props);
      if(!rectangleDone){
+       this.setState({snack:true});
        return;
      }
      let minX = initialX>finalX? finalX: initialX;
@@ -63,6 +73,7 @@ class ToggleActions extends React.Component{
     console.log(xmlDoc);
    }
   render(){
+    const {classes}= this.props;
       return(
         <Paper elevation={1} style={styles.buttonBar}>
         <Grid
@@ -79,10 +90,26 @@ class ToggleActions extends React.Component{
           Download XML
           <CloudDownloadIcon style={{marginLeft:10}} />
         </Button>
+        <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={this.state.snack}
+            autoHideDuration={1000}
+            onClose={this.handleClose}
+            ContentProps={{
+              'aria-describedby': 'message-id',
+              classes:{
+                root:classes.root
+              }
+            }}
+            message={<span id="message-id">Please select the desired region</span>}
+          />
         </Grid>
         </Paper>
       );
   }
 
 }
-export default ToggleActions;
+export default withStyles(styles)(ToggleActions);

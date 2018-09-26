@@ -10,6 +10,8 @@ class ImagePicker extends Component {
   };
   fileChangedHandler = (event) =>{
     const file = event.target.files[0];
+    console.log(event.target.files);
+    console.log(event.target.files[0]);
     this.setState({imagePicked: URL.createObjectURL(file), fileName:file.name});
   }
    renderCanvas = () =>{
@@ -21,7 +23,7 @@ class ImagePicker extends Component {
 
     }
     else{
-     return(<input type="file" onChange={this.fileChangedHandler} />);
+     return(<input type="file" onChange={this.fileChangedHandler} accept="image/*" />);
     }
 }
 
