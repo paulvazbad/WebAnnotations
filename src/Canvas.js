@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import {  Paper, Snackbar, } from '@material-ui/core';
+import {  Paper, Snackbar } from '@material-ui/core';
 import ToggleActions from './ToggleActions.js';
+
+
 
 
 class Canvas extends Component {
@@ -25,9 +27,7 @@ class Canvas extends Component {
 
         }
         else{
-          console.log(this.state);
           this.setState({initialX:offsetX, initialY:offsetY});
-          console.log("Primera vez que le pican");
         }
       }
   onDelete(){
@@ -42,7 +42,6 @@ class Canvas extends Component {
   }
   onMouseMove({nativeEvent}){
     if(this.isDragging && !this.state.rectangleDone){
-      console.log("isDragging");
       this.fX=nativeEvent.offsetX;
       this.fY = nativeEvent.offsetY;
       this.setState({finalX:nativeEvent.offsetX, finalY:nativeEvent.offsetY});
@@ -55,7 +54,6 @@ class Canvas extends Component {
   onMouseUp(){
     this.isDragging=false;
     this.setState({rectangleDone:true, snack:false});
-    console.log(this.state);
 
   }
 
@@ -88,13 +86,12 @@ class Canvas extends Component {
 
   componentDidMount() {
 
-    console.log(this.props.fileName);
+
     const canvas = this.refs.canvas
     const ctx = canvas.getContext("2d");
     const img = this.refs.image
+    console.log(img);
     img.onload = () => {
-      console.log(img.width);
-      console.log(img.height);
       this.setState({snack:true, originalH:img.height, originalW:img.width});
       let newImgHeight = 600;
       let newimgWith = (600*img.width)/img.height;
@@ -124,6 +121,7 @@ class Canvas extends Component {
           />
       </Paper>
       <ToggleActions infImg={this.state} onDelete={this.onDelete} fileName={this.props.fileName}/>
+
       </div>
     );
   }
