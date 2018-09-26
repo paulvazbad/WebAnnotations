@@ -9,7 +9,7 @@ class Header extends Component {
     return (
     <AppBar position="static" color="default">
         <Toolbar>
-        <a href ='/' style={{textDecoration: 'none'}}>
+        <a href ='/labelselect/' style={{textDecoration: 'none'}}>
           <Typography variant="title" color="default">
 
             Label Picker
