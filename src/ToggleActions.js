@@ -104,9 +104,9 @@ class ToggleActions extends React.Component{
      minY = Math.floor(minY*(originalH/600));
      maxY = Math.floor(maxY *(originalH/600));
      //Hacer el pop up de las variables a llenar
-     var xmlString = '<annotation><folder>'+this.state.tag+'</folder>'+' \n'+
+     var xmlString = '<annotation><folder>'+'annotations'+'</folder>'+' \n'+
      	'<filename>'+fileName+'</filename>'+' \n'+
-     '<path>C:\\Users\\pev\\Documents\\TEC\\5to semestre\\Semanai\\tensorflow\\raccoon_dataset\\models\\images\\'+fileName+'\\'+this.props.fileName+'</path> \n'+
+     '<path>./annotations/'+fileName+'/'+this.props.fileName+'</path> \n'+
      	'<source> \n'+
      		'<database>Unknown</database> \n'+
      	'</source> \n'+
