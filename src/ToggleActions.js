@@ -105,7 +105,7 @@ class ToggleActions extends React.Component{
      maxY = Math.floor(maxY *(originalH/600));
      //Hacer el pop up de las variables a llenar
      var xmlString = '<annotation><folder>'+'annotations'+'</folder>'+' \n'+
-     	'<filename>'+fileName+'</filename>'+' \n'+
+     	'<filename>'+this.props.fileName+'</filename>'+' \n'+
      '<path>./annotations/'+fileName+'/'+this.props.fileName+'</path> \n'+
      	'<source> \n'+
      		'<database>Unknown</database> \n'+
