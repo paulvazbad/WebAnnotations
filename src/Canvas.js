@@ -109,7 +109,7 @@ class Canvas extends Component {
     return (
       <div>
       <Paper elevation={1} >
-      <canvas ref="canvas" height={600} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}/>
+      <canvas ref="canvas" height={600} style={{cursor:'pointer'}} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}/>
         <img  ref="image" src={this.props.img} resizemode="stretch" alt=""  style={{display: 'none'}} />
         <Snackbar
             anchorOrigin={{
