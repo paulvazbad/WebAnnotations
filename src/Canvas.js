@@ -12,7 +12,8 @@ class Canvas extends Component {
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onDelete = this.onDelete.bind(this);
   }
-  state={snack:null, rectangleDone:false, initialX:null, initialY:null, finalX:null, finalY:null};
+  state={snack:null, rectangleDone:false, initialX:null, initialY:null, finalX:null, finalY:null,
+    originalW:null, originalH:null};
   isDragging=false;
   fX=0;
   fY=0;
@@ -69,6 +70,8 @@ class Canvas extends Component {
     ctx.drawImage(img, 0, 0, newimgWith , newImgHeight);
     //Dibuja el nuevo rectangulo
   const  {initialX, initialY,finalX,finalY} = this.state;
+  let fileName="";
+  fileName = this.props.fileName;
     ctx.strokeStyle="#FF0000";
     if(finalX&&finalY){
         ctx.strokeRect(initialX,initialY,finalX-initialX,finalY-initialY);
@@ -84,12 +87,15 @@ class Canvas extends Component {
     };
 
   componentDidMount() {
-    this.setState({snack:true});
-    console.log(this.state);
+
+    console.log(this.props.fileName);
     const canvas = this.refs.canvas
     const ctx = canvas.getContext("2d");
     const img = this.refs.image
     img.onload = () => {
+      console.log(img.width);
+      console.log(img.height);
+      this.setState({snack:true, originalH:img.height, originalW:img.width});
       let newImgHeight = 600;
       let newimgWith = (600*img.width)/img.height;
       canvas.width = (600*img.width)/img.height;
@@ -117,7 +123,7 @@ class Canvas extends Component {
             message={<span id="message-id">File succesfully uploaded</span>}
           />
       </Paper>
-      <ToggleActions onDelete={this.onDelete}/>
+      <ToggleActions infImg={this.state} onDelete={this.onDelete} fileName={this.props.fileName}/>
       </div>
     );
   }

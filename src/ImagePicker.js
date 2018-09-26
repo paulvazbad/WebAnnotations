@@ -5,24 +5,23 @@ import 'typeface-roboto';
 
 class ImagePicker extends Component {
   state = {
-    imagePicked: null
+    imagePicked: null,
+    fileName:""
   };
-
   fileChangedHandler = (event) =>{
     const file = event.target.files[0];
-    console.log(file);
-    this.setState({imagePicked: URL.createObjectURL(file)});
+    this.setState({imagePicked: URL.createObjectURL(file), fileName:file.name});
   }
    renderCanvas = () =>{
     if(this.state.imagePicked){
-
+      console.log(this.state.fileName);
       return (
-        <Canvas img={this.state.imagePicked} snack={true}/>
+        <Canvas img={this.state.imagePicked} snack={true} fileName={this.state.fileName}/>
         );
 
     }
     else{
-     return <input type="file" onChange={this.fileChangedHandler} />
+     return(<input type="file" onChange={this.fileChangedHandler} />);
     }
 }
 
