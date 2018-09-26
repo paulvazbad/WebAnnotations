@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Tecate Caguama Light</folder>
+	<filename>IMG_5898.JPG</filename>
+	<path>C:\Users\pev\Documents\TEC\5to semestre\Semanai\tensorflow\raccoon_dataset\models\images\Tecate Caguama Light\IMG_5898.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>0</width>
+		<height>0</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>TLB</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>201</xmin>
+			<ymin>934</ymin>
+			<xmax>2856</xmax>
+			<ymax>1718</ymax>
+		</bndbox>
+	</object>
+</annotation>
