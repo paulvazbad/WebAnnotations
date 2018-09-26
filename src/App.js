@@ -11,7 +11,9 @@ const theme = createMuiTheme({
 });
 
 class App extends Component {
-
+  componentDidMount(){
+      document.title = "LabelPicker"
+    }
   render() {
     return (
     <MuiThemeProvider theme={theme}>
