@@ -19,6 +19,9 @@ const styles = theme => ({
     background: '#FFFFFF',
     marginBottom:1,
   },
+  colorText:{
+    color: 'gray'
+  }
 });
 class ImagePicker extends Component {
 
@@ -57,20 +60,23 @@ class ImagePicker extends Component {
         >
           <CardContent>
             <Typography variant="headline" component="h1" color='inherit'>
-            Welcome to LabelPicker!
+            Welcome to WebAnnotations!
+            </Typography>
+            <Typography component="p" className={this.props.classes.colorText}>
+            The web-based graphical image annotation tool.
             </Typography>
             <Typography component="p" color='inherit'>
             <br/>
              1. Load the images.<br/>
-             2. Select the area of interest <br/>
-             3. Assign the tag to the area <br/>
+             2. Select the area of interest. <br/>
+             3. Assign the tag to the area. <br/>
              4. Download XML <br/>
              <br />
             </Typography>
           </CardContent>
           <CardActions>
              <input type="file" name="file" id="file" class="input" onChange={this.fileChangedHandler} accept="image/*" style={{display: 'none'}} multiple/>
-             <Button variant="extendedFab" size="large" >
+             <Button variant="extendedFab" size="large" color="primary" >
              <label  for="file">
               Load the images
               </label>

@@ -12,7 +12,7 @@ const theme = createMuiTheme({
 
 class App extends Component {
   componentDidMount(){
-      document.title = "LabelPicker"
+      document.title = "WebAnnotations"
     }
   render() {
     return (

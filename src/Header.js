@@ -11,9 +11,7 @@ class Header extends Component {
         <Toolbar>
         <a href ='/labelselect/' style={{textDecoration: 'none'}}>
           <Typography variant="title" color="default">
-
-            Label Picker
-
+            WebAnnotations
           </Typography>
             </a>
         </Toolbar>
