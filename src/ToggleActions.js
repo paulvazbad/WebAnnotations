@@ -106,7 +106,7 @@ class ToggleActions extends React.Component{
      //Hacer el pop up de las variables a llenar
      var xmlString = '<annotation><folder>'+'annotations'+'</folder>'+' \n'+
      	'<filename>'+this.props.fileName+'</filename>'+' \n'+
-     '<path>./annotations/'+fileName+'/'+this.props.fileName+'</path> \n'+
+     '<path>./annotations/'+this.props.fileName+'</path> \n'+
      	'<source> \n'+
      		'<database>Unknown</database> \n'+
      	'</source> \n'+
