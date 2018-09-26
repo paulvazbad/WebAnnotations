@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grid, Button, Card, CardContent, CardActions, Typography   } from '@material-ui/core/';
+import {Grid, Button, Card, CardContent, CardActions, Typography, Dialog,DialogTitle,DialogActions,DialogContent,DialogContentText, TextField   } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
 import Canvas from './Canvas.js';
 import 'typeface-roboto';
@@ -28,7 +28,9 @@ class ImagePicker extends Component {
   state = {
     imagePicked: null,
     fileName:"",
-    files:[]
+    files:[],
+    tag:null,
+    dialog:false
   };
 
 
@@ -39,18 +41,51 @@ class ImagePicker extends Component {
     this.setState({imagePicked: URL.createObjectURL(file), fileName:file.name,  files:event.target.files});
   }
 
+  onTag(){
+    let TempTag=this.state.tag;
+    return(
+      <Dialog
+        open={this.state.dialog}
+        onClose={()=>{this.setState({dialog:false})}}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Insert tag</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            id="standard-with-placeholder"
+            label="Tag"
+            placeholder={this.state.tag}
+            margin="dense"
+            id="name"
+            type="text"
+            fullWidth
+            onChange={(event)=>{TempTag= event.target.value}}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>{this.setState({dialog:false})}} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={()=>{this.setState({dialog:false, tag: TempTag})}} color="primary">
+            Save Tag
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+   }
+
    renderCanvas(){
     if(this.state.imagePicked){
       console.log(this.state.fileName);
       const files = [...this.state.files]
       return files.map(file =>
-    <Canvas img={ URL.createObjectURL(file)} snack={true} fileName={file.name}/>
+    <Canvas img={ URL.createObjectURL(file)} snack={true} fileName={file.name} tag={this.state.tag}/>
       );
 
     }
     else{
      return(
-
        <Card className={this.props.classes.root}>
         <Grid
         container
@@ -81,6 +116,9 @@ class ImagePicker extends Component {
               Load the images
               </label>
              </Button>
+             <Button variant="extendedFab" size="large" color="secondary" onClick={()=> {this.setState({dialog:true})}}>
+              Set default label
+             </Button>
            </CardActions>
          </Grid>
         </Card>);
@@ -96,6 +134,7 @@ class ImagePicker extends Component {
       alignItems="center"
       style={{paddingTop:20, paddingBottom: 20}}
     >
+      {this.onTag()}
       {this.renderCanvas()}
     </Grid>
     );
