@@ -1,6 +1,7 @@
 import React from 'react';
 import {  Paper, Button, Grid    } from '@material-ui/core';
 import  DeleteIcon  from '@material-ui/icons/Delete';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 const styles={
   buttonBar:{
@@ -11,6 +12,10 @@ const styles={
 class ToggleActions extends React.Component{
    constructor(props){
      super(props);
+     this.SaveXML = this.SaveXML.bind(this);
+   }
+   SaveXML(){
+     console.log("Save XML")
    }
   render(){
       return(
@@ -23,11 +28,11 @@ class ToggleActions extends React.Component{
         >
         <Button variant="contained" color="secondary" onClick={this.props.onDelete} >
           Delete Selection
-          <DeleteIcon />
+          <DeleteIcon style={{marginLeft:10}}/>
         </Button>
-        <Button variant="contained" color="primary" onClick={this.props.onDelete} >
+        <Button variant="contained" color="primary" onClick={this.SaveXML} >
           Download XML
-          <DeleteIcon />
+          <CloudDownloadIcon style={{marginLeft:10}} />
         </Button>
         </Grid>
         </Paper>
