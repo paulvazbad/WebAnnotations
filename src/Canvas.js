@@ -125,7 +125,7 @@ class Canvas extends Component {
             message={<span id="message-id">File succesfully uploaded</span>}
           />
       </Paper>
-      <ToggleActions infImg={this.state} onDelete={this.onDelete} fileName={this.props.fileName}/>
+      <ToggleActions infImg={this.state} onDelete={this.onDelete} fileName={this.props.fileName} tag={this.props.tag}/>
 
       </div>
     );

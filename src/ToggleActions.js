@@ -29,6 +29,9 @@ class ToggleActions extends React.Component{
      this.onTag = this.onTag.bind(this);
 
    }
+   componentDidMount(){
+     this.setState({tag:this.props.tag});
+   }
    state ={snack:null, dialog:false, tag:null};
 
    handleClose = () => {
