@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {  Paper, Button, Grid, Snackbar,TextField   } from '@material-ui/core';
 import  DeleteIcon  from '@material-ui/icons/Delete';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
@@ -9,7 +8,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 const styles={
@@ -32,7 +30,6 @@ class ToggleActions extends React.Component{
      this.SaveXML = this.SaveXML.bind(this);
      this.insertTags = this.insertTags.bind(this);
      this.onTag = this.onTag.bind(this);
-     this.onAzureInfo = this.onAzureInfo.bind(this);
      this.pushToAzure =this.pushToAzure.bind(this);
 
    }
@@ -63,7 +60,6 @@ class ToggleActions extends React.Component{
               label="Tag"
               placeholder={this.state.tag}
               margin="dense"
-              id="name"
               type="text"
               fullWidth
               onChange={(event)=>{TempTag= event.target.value}}
@@ -80,73 +76,6 @@ class ToggleActions extends React.Component{
         </Dialog>
       );
      }
-
-     onAzureInfo(){
-       let TempAZURE_STORAGE_ACCOUNT=this.state.AzureInfo.AZURE_STORAGE_ACCOUNT;
-       let TempAZURE_STORAGE_ACCESS_KEY=this.state.AzureInfo.AZURE_STORAGE_ACCESS_KEY;
-       let TempAZURE_STORAGE_CONNECTION_STRING = this.state.AzureInfo.AZURE_STORAGE_CONNECTION_STRING;
-       const {rectangleDone} = this.props.infImg;
-         return(
-           <Dialog
-             open={this.state.AzureInfoDialog}
-             onClose={()=>{this.setState({AzureInfoDialog:false})}}
-             aria-labelledby="form-dialog-title"
-           >
-             <DialogTitle id="form-dialog-title">Insert Azure info</DialogTitle>
-             <DialogContent>
-               <TextField
-                 autoFocus
-                 id="standard-with-placeholder"
-                 label="Azure storage account"
-                 placeholder={this.state.AzureInfo.AZURE_STORAGE_ACCOUNT}
-                 margin="dense"
-                 id="name"
-                 type="text"
-                 fullWidth
-                 onChange={(event)=>{TempAZURE_STORAGE_ACCOUNT= event.target.value}}
-               />
-             </DialogContent>
-             <DialogContent>
-               <TextField
-                 autoFocus
-                 id="standard-with-placeholder"
-                 label="Azure storage access key "
-                 placeholder={this.state.AzureInfo.AZURE_STORAGE_ACCESS_KEY}
-                 margin="dense"
-                 id="name"
-                 type="text"
-                 fullWidth
-                 onChange={(event)=>{TempAZURE_STORAGE_ACCESS_KEY= event.target.value}}
-               />
-             </DialogContent>
-             <DialogContent>
-               <TextField
-                 autoFocus
-                 id="standard-with-placeholder"
-                 label="Azure storage connection string"
-                 placeholder={this.state.AzureInfo.AZURE_STORAGE_CONNECTION_STRING}
-                 margin="dense"
-                 id="name"
-                 type="text"
-                 fullWidth
-                 onChange={(event)=>{TempAZURE_STORAGE_CONNECTION_STRING= event.target.value}}
-               />
-             </DialogContent>
-             <DialogActions>
-               <Button onClick={()=>{this.setState({AzureInfoDialog:false})}} color="primary">
-                 Cancel
-               </Button>
-               <Button onClick={()=>{this.setState({AzureInfoDialog:false,
-                 AzureInfo: {AZURE_STORAGE_ACCOUNT: TempAZURE_STORAGE_ACCOUNT,AZURE_STORAGE_ACCESS_KEY: TempAZURE_STORAGE_ACCESS_KEY,AZURE_STORAGE_CONNECTION_STRING:TempAZURE_STORAGE_CONNECTION_STRING}
-               })}} color="primary">
-                 Save Azure info
-               </Button>
-             </DialogActions>
-           </Dialog>
-         );
-    }
-
-
     insertTags(){
       if(this.props.infImg.rectangleDone){
         let assignTagText;
@@ -252,7 +181,6 @@ class ToggleActions extends React.Component{
       fileService.createFileFromText ('img', 'equipo6', fileName +".xml", xmlString, function(error, result, response) {
        if (!error) {
         console.log("File created");
-        success=true;
 
        }
      });
@@ -314,14 +242,13 @@ class ToggleActions extends React.Component{
      '</annotation> \n';
     var parser = new DOMParser();
     var xmlDoc = parser.parseFromString(xmlString, "text/xml"); //important to use "text/xml"
-    var elements = xmlDoc.getElementsByTagName("bndbox");
     var fileDownload = require('js-file-download');
     console.log(xmlDoc);
     fileDownload(xmlString, fileName+'.xml');
    }
 
   render(){
-    if(this.state.AzureInfo != this.props.azureInfo){
+    if(this.state.AzureInfo !== this.props.azureInfo){
       this.setState({AzureInfo:this.props.azureInfo});
     }
     const {classes}= this.props;

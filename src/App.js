@@ -3,7 +3,7 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import 'typeface-roboto';
 import Header from './Header.js';
 import ImagePicker from './ImagePicker.js';
-import {Grid, Button, Card, CardContent, CardActions, Typography, Dialog,DialogTitle,DialogActions,DialogContent,DialogContentText, TextField   } from '@material-ui/core/';
+import {Button, CardContent, Dialog,DialogTitle,DialogActions,DialogContent,DialogContentText, TextField   } from '@material-ui/core/';
 
 const theme = createMuiTheme({
   palette: {
@@ -46,7 +46,6 @@ class App extends Component {
               label="Azure storage account"
               placeholder={this.state.AzureInfo.AZURE_STORAGE_ACCOUNT}
               margin="dense"
-              id="name"
               type="password"
               fullWidth
               onChange={(event)=>{TempAZURE_STORAGE_ACCOUNT= event.target.value}}

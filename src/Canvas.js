@@ -99,6 +99,21 @@ class Canvas extends Component {
       let newimgWith = (600*img.width)/img.height;
       canvas.width = (600*img.width)/img.height;
       ctx.drawImage(img, 0, 0, newimgWith , newImgHeight);
+      const  {initialX, initialY,finalX,finalY} = this.state;
+      let fileName="";
+      fileName = this.props.fileName;
+        ctx.strokeStyle="#FF0000";
+        ctx.fillStyle="#00FF00";
+        if(finalX&&finalY){
+            ctx.strokeRect(initialX,initialY,finalX-initialX,finalY-initialY);
+            ctx.fillRect(initialX-4,initialY-4,8,8);
+            ctx.fillRect(initialX-4,finalY-4,8,8);
+            ctx.fillRect(finalX-4,initialY-4,8,8);
+            ctx.fillRect(finalX-4,finalY-4,8,8);
+        }
+        else{
+          return;
+        }
     }
   }
 
