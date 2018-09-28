@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {  Paper, Snackbar } from '@material-ui/core';
+import {  Paper } from '@material-ui/core';
 import ToggleActions from './ToggleActions.js';
 
 
@@ -14,7 +14,7 @@ class Canvas extends Component {
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onDelete = this.onDelete.bind(this);
   }
-  state={snack:null, rectangleDone:false, initialX:null, initialY:null, finalX:null, finalY:null,
+  state={ rectangleDone:false, initialX:null, initialY:null, finalX:null, finalY:null,
     originalW:null, originalH:null};
   isDragging=false;
   fX=0;
@@ -85,9 +85,6 @@ class Canvas extends Component {
 
   }
 
-  handleClose = () => {
-      this.setState({ snack: false });
-    };
 
   componentDidMount() {
 
@@ -95,7 +92,7 @@ class Canvas extends Component {
     const canvas = this.refs.canvas
     const ctx = canvas.getContext("2d");
     const img = this.refs.image
-    console.log(img);
+
     img.onload = () => {
       this.setState({snack:true, originalH:img.height, originalW:img.width});
       let newImgHeight = 600;
@@ -106,26 +103,14 @@ class Canvas extends Component {
   }
 
   render() {
+
     return (
       <div>
       <Paper elevation={1} >
       <canvas ref="canvas" height={600} style={{cursor:'pointer'}} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}/>
         <img  ref="image" src={this.props.img} resizemode="stretch" alt=""  style={{display: 'none'}} />
-        <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            open={this.state.snack}
-            autoHideDuration={3000}
-            onClose={this.handleClose}
-            ContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id">File succesfully uploaded</span>}
-          />
       </Paper>
-      <ToggleActions infImg={this.state} onDelete={this.onDelete} fileName={this.props.fileName} tag={this.props.tag}/>
+      <ToggleActions azureInfo={this.props.azureInfo} infImg={this.state} onDelete={this.onDelete} fileName={this.props.fileName} tag={this.props.tag} img={this.props.img} fullFile={this.props.fullFile}/>
 
       </div>
     );

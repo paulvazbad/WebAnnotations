@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grid, Button, Card, CardContent, CardActions, Typography, Dialog,DialogTitle,DialogActions,DialogContent,DialogContentText, TextField   } from '@material-ui/core/';
+import {Grid, Button, Card, CardContent, CardActions, Typography, Dialog,DialogTitle,DialogActions,DialogContent,DialogContentText, TextField, Snackbar   } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
 import Canvas from './Canvas.js';
 import 'typeface-roboto';
@@ -30,16 +30,22 @@ class ImagePicker extends Component {
     fileName:"",
     files:[],
     tag:null,
-    dialog:false
+    dialog:false,
+    snack:null
+
   };
 
-
+  handleClose = () => {
+      this.setState({ snack: false });
+    };
   fileChangedHandler = (event) =>{
     const file = event.target.files[0];
     console.log(event.target.files);
     console.log(event.target.files[0]);
-    this.setState({imagePicked: URL.createObjectURL(file), fileName:file.name,  files:event.target.files});
+    this.setState({imagePicked: URL.createObjectURL(file), fileName:file.name,  files:event.target.files, snack:true});
   }
+
+
 
   onTag(){
     let TempTag=this.state.tag;
@@ -80,7 +86,7 @@ class ImagePicker extends Component {
       console.log(this.state.fileName);
       const files = [...this.state.files]
       return files.map(file =>
-    <Canvas img={ URL.createObjectURL(file)} snack={true} fileName={file.name} tag={this.state.tag}/>
+    <Canvas img={ URL.createObjectURL(file)} snack={true} fileName={file.name} azureInfo={this.props.azureInfo} tag={this.state.tag} fullFile={file}/>
       );
 
     }
@@ -110,7 +116,7 @@ class ImagePicker extends Component {
             </Typography>
           </CardContent>
           <CardActions>
-             <input type="file" name="file" id="file" class="input" onChange={this.fileChangedHandler} accept="image/*" style={{display: 'none'}} multiple/>
+             <input type="file" name="file" id="file"  onChange={this.fileChangedHandler} accept="image/*" style={{display: 'none'}} multiple/>
              <Button variant="extendedFab" size="large" color="primary" >
              <label  for="file">
               Load the images
@@ -136,6 +142,19 @@ class ImagePicker extends Component {
     >
       {this.onTag()}
       {this.renderCanvas()}
+      <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.snack}
+          autoHideDuration={3000}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">File succesfully uploaded</span>}
+        />
     </Grid>
     );
   }

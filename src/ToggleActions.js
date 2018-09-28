@@ -20,6 +20,10 @@ const styles={
   },
   root:{
     background:'#B71C1C'
+  },
+  azureButton:{
+    backgroundColor:'purple',
+    color: 'white'
   }
 };
 class ToggleActions extends React.Component{
@@ -28,19 +32,19 @@ class ToggleActions extends React.Component{
      this.SaveXML = this.SaveXML.bind(this);
      this.insertTags = this.insertTags.bind(this);
      this.onTag = this.onTag.bind(this);
-     this.generateXML = this.generateXML.bind(this);
      this.onAzureInfo = this.onAzureInfo.bind(this);
      this.pushToAzure =this.pushToAzure.bind(this);
 
    }
    componentDidMount(){
-     this.setState({tag:this.props.tag});
+     console.log(this.props.azureInfo);
+     this.setState({tag:this.props.tag, AzureInfo:this.props.azureInfo});
    }
-   state ={snack:null, dialog:false, tag:null, xmlString:null, AzureInfoDialog:false, AzureInfo:{AZURE_STORAGE_ACCOUNT: null,AZURE_STORAGE_ACCESS_KEY:null, AZURE_STORAGE_CONNECTION_STRING:null },
- snackAzure:null};
+   state ={snack:null, dialog:false, tag:null, xmlString:"", AzureInfo:{AZURE_STORAGE_ACCOUNT: null,AZURE_STORAGE_ACCESS_KEY:null, AZURE_STORAGE_CONNECTION_STRING:null },
+ snackAzure:null, snackSuccess:false};
 
    handleClose = () => {
-       this.setState({ snack: false, snackAzure:false });
+       this.setState({ snack: false, snackAzure:false, snackSuccess:false });
      };
 
     onTag(){
@@ -119,7 +123,7 @@ class ToggleActions extends React.Component{
                <TextField
                  autoFocus
                  id="standard-with-placeholder"
-                 label="Azure storage access key "
+                 label="Azure storage connection string"
                  placeholder={this.state.AzureInfo.AZURE_STORAGE_CONNECTION_STRING}
                  margin="dense"
                  id="name"
@@ -135,7 +139,7 @@ class ToggleActions extends React.Component{
                <Button onClick={()=>{this.setState({AzureInfoDialog:false,
                  AzureInfo: {AZURE_STORAGE_ACCOUNT: TempAZURE_STORAGE_ACCOUNT,AZURE_STORAGE_ACCESS_KEY: TempAZURE_STORAGE_ACCESS_KEY,AZURE_STORAGE_CONNECTION_STRING:TempAZURE_STORAGE_CONNECTION_STRING}
                })}} color="primary">
-                 Save Tags
+                 Save Azure info
                </Button>
              </DialogActions>
            </Dialog>
@@ -162,105 +166,164 @@ class ToggleActions extends React.Component{
       }
     }
     pushToAzure(){
-      if(this.generateXML()){
-        console.log("NO hay cuadros o tags");
-        return;
-      }
-      else{
-
-
-        const {accountName, accountKey} = this.state.AzureInfo;
+        console.log("Generate XML");
+        const {initialX, initialY,finalX,finalY, rectangleDone, originalH, originalW} = this.props.infImg;
+        if(!rectangleDone || !this.state.tag){
+          this.setState({snack:true});
+          return;
+        }
+        let fileName = this.props.fileName.replace(/\.[^/.]+$/, "");
+        let minX = initialX>finalX? finalX: initialX;
+        let minY = initialY>finalY? finalY: initialY;
+        let maxX = initialX>finalX? initialX: finalX;
+        let maxY = initialY>finalY? initialY: finalY;
+        minX = Math.floor(minX*(originalW/((600*originalW)/originalH)));
+        maxX= Math.floor(maxX*(originalW/((600*originalW)/originalH)));
+        minY = Math.floor(minY*(originalH/600));
+        maxY = Math.floor(maxY *(originalH/600));
+        //Hacer el pop up de las variables a llenar
+        var xmlString = '<annotation><folder>'+'annotations'+'</folder>'+' \n'+
+          '<filename>'+this.props.fileName+'</filename>'+' \n'+
+        '<path>./annotations/'+this.props.fileName+'</path> \n'+
+          '<source> \n'+
+            '<database>Unknown</database> \n'+
+          '</source> \n'+
+          '<size> \n'+
+            '<width>'+originalW+'</width> \n'+
+            '<height>'+originalH+'</height> \n'+
+            '<depth>3</depth> \n'+
+        '</size> \n'+
+        '	<segmented>0</segmented> \n'+
+          '<object> \n'+
+          '	<name>'+this.state.tag+'</name> \n'+
+          '	<pose>Unspecified</pose> \n'+
+            '<truncated>0</truncated> \n'+
+            '<difficult>0</difficult> \n'+
+            '<bndbox> \n'+
+              '<xmin>'+ minX+'</xmin> \n'+
+              '<ymin>'+minY+'</ymin> \n'+
+              '<xmax>'+maxX+'</xmax> \n'+
+              '<ymax>'+maxY+'</ymax> \n'+
+            '</bndbox> \n'+
+          '</object> \n'+
+        '</annotation> \n';
         var azure = require('azure-storage');
-        var fileService = azure.createFileService(accountName,accountKey);
+
+        if(this.state.AzureInfo.AZURE_STORAGE_CONNECTION_STRING){
+          const {AZURE_STORAGE_CONNECTION_STRING} = this.state.AzureInfo;
+          console.log(AZURE_STORAGE_CONNECTION_STRING);
+          var fileService = azure.createFileService(AZURE_STORAGE_CONNECTION_STRING);
+        }
+        else{
+          const {AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY} = this.state.AzureInfo;
+          console.log(AZURE_STORAGE_ACCOUNT);
+          console.log(AZURE_STORAGE_ACCESS_KEY);
+          var fileService = azure.createFileService(AZURE_STORAGE_ACCOUNT,AZURE_STORAGE_ACCESS_KEY);
+        }
+
         fileService.createShareIfNotExists('img', function(error, result, response) {
         if (error) {
           console.log("Couldn't create share");
           // if result = true, share was created.
           // if result = false, share already existed.
         }
-        if(!result){
+        else if(!result){
           console.log("Share already existed");
         }
       });
 
-      fileService.createDirectoryIfNotExists('Equipo6', 'XMLdirectory', function(error, result, response) {
+      fileService.createDirectoryIfNotExists('img', 'equipo6', function(error, result, response) {
         if (error) {
           console.log("Couldn't create directory");
           // if result.created = true, share was created.
           // if result.created = false, share already existed.
         }
-        if(!result.created){
-        console.log("Directory already existed");
+        else if(!result.created){
+          console.log("Directory already existed");
         }
         });
-        let fileName = this.props.fileName.replace(/\.[^/.]+$/, "");
+        fileName = String(fileName);
         var parser = new DOMParser();
-        var xmlDoc = parser.parseFromString(this.state.xmlString, "text/xml"); //important to use "text/xml"
-      fileService.createFileFromLocalFile('img', 'Equipo6', fileName, xmlDoc, function(error, result, response) {
+        var xmlDoc = parser.parseFromString(xmlString, "text/xml"); //important to use "text/xml"
+        //console.log(fileName);
+        console.log(xmlDoc);
+        console.log(xmlDoc.documentURI );
+      var success=false;
+      fileService.createFileFromText ('img', 'equipo6', fileName +".xml", xmlString, function(error, result, response) {
        if (!error) {
         console.log("File created");
+        success=true;
+
        }
      });
-   }
-  }
-    generateXML(){
-      console.log("Generate XML");
-      const {initialX, initialY,finalX,finalY, rectangleDone, originalH, originalW} = this.props.infImg;
-      if(!rectangleDone || !this.state.tag){
-        this.setState({snack:true});
-        return true;
+     this.setState({snackSuccess:true});
+    /*  console.log(fileName);
+      console.log(this.props.fullFile);
+      console.log(this.props);
+      console.log(this.props.img)
+
+     fileService.createFileFromLocalFile('img', 'Equipo6', fileName+'.jpg', this.props.img, function(error, result, response) {
+      if (!error) {
+       console.log("File created");
       }
-      let fileName = this.props.fileName.replace(/\.[^/.]+$/, "");
-      let minX = initialX>finalX? finalX: initialX;
-      let minY = initialY>finalY? finalY: initialY;
-      let maxX = initialX>finalX? initialX: finalX;
-      let maxY = initialY>finalY? initialY: finalY;
-      minX = Math.floor(minX*(originalW/((600*originalW)/originalH)));
-      maxX= Math.floor(maxX*(originalW/((600*originalW)/originalH)));
-      minY = Math.floor(minY*(originalH/600));
-      maxY = Math.floor(maxY *(originalH/600));
-      //Hacer el pop up de las variables a llenar
-      var xmlString = '<annotation><folder>'+'annotations'+'</folder>'+' \n'+
-      	'<filename>'+this.props.fileName+'</filename>'+' \n'+
-      '<path>./annotations/'+this.props.fileName+'</path> \n'+
-      	'<source> \n'+
-      		'<database>Unknown</database> \n'+
-      	'</source> \n'+
-      	'<size> \n'+
-      		'<width>'+originalW+'</width> \n'+
-      		'<height>'+originalH+'</height> \n'+
-      		'<depth>3</depth> \n'+
-      '</size> \n'+
-      '	<segmented>0</segmented> \n'+
-      	'<object> \n'+
-      	'	<name>'+this.state.tag+'</name> \n'+
-      	'	<pose>Unspecified</pose> \n'+
-      		'<truncated>0</truncated> \n'+
-      		'<difficult>0</difficult> \n'+
-      		'<bndbox> \n'+
-      			'<xmin>'+ minX+'</xmin> \n'+
-      			'<ymin>'+minY+'</ymin> \n'+
-      			'<xmax>'+maxX+'</xmax> \n'+
-      			'<ymax>'+maxY+'</ymax> \n'+
-      	  '</bndbox> \n'+
-      	'</object> \n'+
-      '</annotation> \n';
-      this.setState({xmlString:xmlString});
-    }
+    });
+    */
+  }
 
    SaveXML(){
-    if(this.generateXML()){
-      return;
-    }
-    let fileName = this.props.fileName.replace(/\.[^/.]+$/, "");
+     console.log("Generate XML");
+     const {initialX, initialY,finalX,finalY, rectangleDone, originalH, originalW} = this.props.infImg;
+     if(!rectangleDone || !this.state.tag){
+       this.setState({snack:true});
+       return;
+     }
+     let fileName = this.props.fileName.replace(/\.[^/.]+$/, "");
+     let minX = initialX>finalX? finalX: initialX;
+     let minY = initialY>finalY? finalY: initialY;
+     let maxX = initialX>finalX? initialX: finalX;
+     let maxY = initialY>finalY? initialY: finalY;
+     minX = Math.floor(minX*(originalW/((600*originalW)/originalH)));
+     maxX= Math.floor(maxX*(originalW/((600*originalW)/originalH)));
+     minY = Math.floor(minY*(originalH/600));
+     maxY = Math.floor(maxY *(originalH/600));
+     //Hacer el pop up de las variables a llenar
+     var xmlString = '<annotation><folder>'+'annotations'+'</folder>'+' \n'+
+       '<filename>'+this.props.fileName+'</filename>'+' \n'+
+     '<path>./annotations/'+this.props.fileName+'</path> \n'+
+       '<source> \n'+
+         '<database>Unknown</database> \n'+
+       '</source> \n'+
+       '<size> \n'+
+         '<width>'+originalW+'</width> \n'+
+         '<height>'+originalH+'</height> \n'+
+         '<depth>3</depth> \n'+
+     '</size> \n'+
+     '	<segmented>0</segmented> \n'+
+       '<object> \n'+
+       '	<name>'+this.state.tag+'</name> \n'+
+       '	<pose>Unspecified</pose> \n'+
+         '<truncated>0</truncated> \n'+
+         '<difficult>0</difficult> \n'+
+         '<bndbox> \n'+
+           '<xmin>'+ minX+'</xmin> \n'+
+           '<ymin>'+minY+'</ymin> \n'+
+           '<xmax>'+maxX+'</xmax> \n'+
+           '<ymax>'+maxY+'</ymax> \n'+
+         '</bndbox> \n'+
+       '</object> \n'+
+     '</annotation> \n';
     var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(this.state.xmlString, "text/xml"); //important to use "text/xml"
+    var xmlDoc = parser.parseFromString(xmlString, "text/xml"); //important to use "text/xml"
     var elements = xmlDoc.getElementsByTagName("bndbox");
     var fileDownload = require('js-file-download');
-    fileDownload(this.state.xmlString, fileName+'.xml');
+    console.log(xmlDoc);
+    fileDownload(xmlString, fileName+'.xml');
    }
 
   render(){
+    if(this.state.AzureInfo != this.props.azureInfo){
+      this.setState({AzureInfo:this.props.azureInfo});
+    }
     const {classes}= this.props;
       return(
         <Paper elevation={1} style={styles.buttonBar}>
@@ -296,22 +359,19 @@ class ToggleActions extends React.Component{
               direction="row"
               justify="space-evenly"
               alignItems="center"
+              style={{paddingTop:10}}
             >
-            <Button variant="contained" color="primary" onClick={()=>{
+            <Button variant="contained" className={classes.azureButton} onClick={()=>{
               if((this.state.AzureInfo.AZURE_STORAGE_ACCOUNT && this.state.AzureInfo.AZURE_STORAGE_ACCESS_KEY) || this.state.AzureInfo.AZURE_STORAGE_CONNECTION_STRING){
                 this.pushToAzure();
               }
               else{
-                this.setState({AzureInfoDialog:true});
-
+                this.setState({snackAzure:true});
               }
             }}>
               Upload to Azure
               <CloudUploadIcon style={{marginLeft:10}} />
             </Button>
-            {
-              this.onAzureInfo()
-            }
             </Grid>
             <Snackbar
                 anchorOrigin={{
@@ -346,6 +406,19 @@ class ToggleActions extends React.Component{
             }}
             message={<span id="message-id">Please select the desired region and assign the tag</span>}
           />
+          <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              open={this.state.snackSuccess}
+              autoHideDuration={1000}
+              onClose={this.handleClose}
+              ContentProps={{
+                'aria-describedby': 'message-id'
+              }}
+              message={<span id="message-id">File uploaded to Azure</span>}
+            />
         </Grid>
         </Paper>
       );
